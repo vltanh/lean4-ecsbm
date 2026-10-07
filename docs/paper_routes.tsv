@@ -1,0 +1,12 @@
+# Routes of the paper's proofs, for scripts/route_check.py: label, environment, whether the paper
+# proves it, and the labels of the results that its proof cites.
+# Written by hand from the published version (Applied Network Science 10, 15, 2025), because it
+# has no TeX source; the TeX source of arXiv:2502.03662v1 labels no theorem, so
+# `route_check.py extract` finds no labelled statement in it. The labels are the anchors of the
+# theorems in the published HTML (https://doi.org/10.1007/s41109-025-00701-2):
+# FPar1 = Theorem 1 (its proof is FPar2), FPar3 = Theorem 2 (its proof is FPar4).
+# The proof of Theorem 2 cites Theorem 1 ("By Theorem 1, for every cluster ..."); the proof of
+# Theorem 1 cites no result of the paper.
+# label	environment	proved	cited statements
+FPar1	theorem	1	
+FPar3	theorem	1	FPar1
