@@ -56,10 +56,15 @@ at them. The proofs of the paper use no result from prior work, so the list is e
 meta def externalResults : List (String × Name) :=
   []
 
-/-- The numbered results of the paper, in the order of the paper. -/
+/-- The numbered results of the paper, in the order of the paper, then its unnumbered claims. -/
 meta def paperResults : List (String × Name) :=
   [("Thm 1", ``ECSBM.theorem1),
-   ("Thm 2", ``ECSBM.theorem2)]
+   ("Thm 2", ``ECSBM.theorem2),
+   ("Stage 1: first k + 1 vertices form a clique", ``ECSBM.CliqueStep1Run.isClique),
+   ("Fig. 3: spanning subnetwork is k-edge-connected", ``ECSBM.CliqueStep1Run.isEdgeConnected),
+   ("Thm 2 for the paper's Step 1", ``ECSBM.CliqueRun.theorem2),
+   ("Each edge in exactly one subnetwork", ``ECSBM.edge_mem_clustered_xor_outlier),
+   ("Proof of Thm 1: N₀ has k + 1 vertices", ``ECSBM.IsEdgeConnected.add_one_le_card)]
 
 /-- The theorems that Palomar's comparator checks (`theorem_names` of `comparator.json`). -/
 meta def solutionResults : List Name :=

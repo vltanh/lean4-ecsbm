@@ -1,0 +1,15 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "ECSBM.Challenge.theorem1",
+    "ECSBM.Challenge.theorem2",
+    "ECSBM.Challenge.le_minCutSize_iff",
+    "ECSBM.Challenge.minCutSize_eq_zero_iff",
+    "ECSBM.Challenge.minCutSize_completeGraph",
+    "ECSBM.Challenge.Run.exists_clique"
+  ],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}

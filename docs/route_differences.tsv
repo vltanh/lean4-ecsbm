@@ -1,0 +1,4 @@
+# Differences between the routes of the formal proofs and of the paper's proofs that have been
+# reviewed and accepted, for scripts/route_check.py: LABEL<TAB>+OTHER or -OTHER<TAB>reason.
+# There are none: the proof of Theorem 2 (FPar3) uses Theorem 1 (FPar1), as the paper's does, and
+# the proof of Theorem 1 uses no other result of the paper.
