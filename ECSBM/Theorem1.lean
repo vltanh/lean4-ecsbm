@@ -59,8 +59,10 @@ theorem output_adj_of_N₀ {a b : r.V₀} (h : r.N₀.Adj a b) : r.output.Adj (a
 `T` is nonempty, at least `k` edges of the output cross the cut. Let `v ∈ T` be the first vertex of
 `T` to be added. The `k` vertices it was made adjacent to were present before it, so they lie in
 `V₀ ⊆ S` or were added before `v`, hence also lie in `S`; the edges from `v` to them join `v` to
-`S`. (The paper says that `v` has exactly `k` neighbours in `S`; it may have more, since vertices
-of `S` added later may be made adjacent to `v`, but these `k` suffice.) -/
+`S`. (The paper says that `v` has exactly `k` neighbours in `S`. For a minimum edge cut this is
+true, because the last vertex added has degree `k`, but the paper does not show it, and for other
+cuts `v` may have more, since vertices of `S` added later may be made adjacent to `v`. The
+argument needs only these `k`.) -/
 theorem case1 {S : Set V} (hV₀ : r.V₀ ⊆ S) (hT : Sᶜ.Nonempty) :
     (k : ℕ∞) ≤ (crossingEdges r.output S).encard := by
   classical
@@ -128,10 +130,10 @@ guarantees" says. Section "The EC-SBM network simulator" makes a vertex adjacent
 `min{k, |N₀|}` vertices of the growing subnetwork instead (printed `max{k, |N₀|}`, a misprint);
 the two rules agree once `k` vertices are present, which the proof's claim `|N₀| ≥ k + 1` is meant
 to ensure. That claim needs `N₀` to have at least two vertices
-(`ECSBM.IsEdgeConnected.add_one_le_card`): a graph with one vertex has no edge cut, so it is
-`k`-edge-connected for every `k`. From a one-vertex `N₀` and with `k ≥ 2`, no vertex can be added
-with exactly `k` neighbours. The `min` rule would add vertices, and its output is `k`-edge-connected
-when `V` has more than `k` vertices (the first `k + 1` vertices form a clique,
+(`ECSBM.IsEdgeConnected.add_one_le_card`): a graph with at most one vertex has no edge cut, so it
+is `k`-edge-connected for every `k`. From a one-vertex `N₀` and with `k ≥ 2`, no vertex can be
+added with exactly `k` neighbours. The `min` rule would add vertices, and its output is
+`k`-edge-connected when `V` has more than `k` vertices (the first `k + 1` vertices form a clique,
 `ECSBM.CliqueStep1Run.isEdgeConnected`), but not when `V` has at most `k` vertices: for
 `V = {a, b}` and `k = 2` it is a single edge. In EC-SBM, `k` is less than the number of vertices of
 the cluster. -/

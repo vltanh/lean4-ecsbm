@@ -12,7 +12,8 @@ The hypotheses of Theorems 1 and 2 can be met, so neither theorem is vacuous.
 * `ECSBM.IsEdgeConnected.add_one_le_card`: a `k`-edge-connected graph with at least two vertices
   has at least `k + 1` vertices. The proof of Theorem 1 states this for `N₀` ("`N₀` is
   `k`-edge-connected, from which it follows that `|N₀| ≥ k + 1`"), without the condition that `N₀`
-  has at least two vertices, which it needs: a single vertex is `k`-edge-connected for every `k`.
+  has at least two vertices, which it needs: a graph with at most one vertex has no edge cut, so it
+  is `k`-edge-connected for every `k`.
 * `ECSBM.minCutSize_le_card_sub_one`: the minimum cut size of a graph with `n ≥ 2` vertices is at
   most `n - 1`, so the desired edge connectivity `k` of a non-singleton cluster `C` satisfies
   `k + 1 ≤ |C|`, and the `(k + 1)`-clique that Step 1 starts from fits in `C`.

@@ -14,8 +14,15 @@ an `ECSBM.Run`.
 The proof follows the paper's. By Theorem 1, after Step 1 every non-singleton cluster has minimum
 cut size at least its desired edge connectivity. The later steps only add edges, or remove excess
 edges (self-loops and copies of parallel edges), which never removes an edge already present. So
-the network after each step contains the result `N₀` of Step 1, and adding edges does not decrease
-the minimum cut size of a cluster (`ECSBM.minCutSize_mono`).
+the network `N₁` at the end of Stage 1 contains the result `N₀` of Step 1, the later networks
+contain `N₁`, and adding edges does not decrease the minimum cut size of a cluster
+(`ECSBM.minCutSize_mono`).
+
+For Stage 2 the paper says more: adding the synthetic outlier subnetwork "does not affect `N₁` and
+so cannot modify the edge-connectivity of any cluster", since its edges all have an outlier
+endpoint. The formal model lets the multigraph of Stage 2 be any multigraph, so that every run of
+EC-SBM is covered, and the proof uses for Stage 2 what the paper uses for Step 2a and Stage 3:
+the step keeps `N₁`, and adding edges cannot reduce the edge connectivity of a cluster.
 -/
 
 @[expose] public section
@@ -93,11 +100,13 @@ theorem theorem2 {W : Type*} [Fintype W] [DecidableEq W] (G : SimpleGraph W)
       rw [hk, le_minCutSize_iff]
       exact IsEdgeConnected.mono (theorem1 (r.step1 C hCn) (hinit C hCn)).2
         (r.step1_output_le_induce hCn)
-    -- the later steps never remove an edge of `N₀`
-    have hle : r.step1Output ≤ r.output :=
-      r.step1Output_le_stage1Output.trans
-        (r.stage1Output_le_stage2Output.trans r.stage2Output_le_output)
-    exact h₀.trans (minCutSize_mono (comap_monotone _ hle))
+    -- Steps 2a and 2b keep `N₀`, so the same holds in `N₁`, at the end of Stage 1
+    have h₁ : minCutSize (G.induce (C : Set W)) ≤
+        minCutSize (r.stage1Output.induce (C : Set W)) :=
+      h₀.trans (minCutSize_mono (comap_monotone _ r.step1Output_le_stage1Output))
+    -- Stage 2 and Stage 3 keep `N₁`
+    exact h₁.trans (minCutSize_mono (comap_monotone _
+      (r.stage1Output_le_stage2Output.trans r.stage2Output_le_output)))
   · -- a singleton cluster has no edge cut
     have : Subsingleton (C : Set W) :=
       ⟨fun x y => Subtype.ext (Finset.card_le_one.mp (not_lt.mp hns) x x.2 y y.2)⟩
