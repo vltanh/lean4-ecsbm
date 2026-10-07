@@ -47,7 +47,19 @@ def outlierSubnetwork (G : SimpleGraph W) (O : Set W) : SimpleGraph W :=
 outlier (Section "The EC-SBM network simulator"). -/
 theorem outlierSubnetwork_adj (G : SimpleGraph W) (O : Set W) (u v : W) :
     (outlierSubnetwork G O).Adj u v ↔ G.Adj u v ∧ (u ∈ O ∨ v ∈ O) := by
-  sorry
+  rw [outlierSubnetwork, sdiff_adj, clusteredSubnetwork, map_adj']
+  constructor
+  · rintro ⟨hG, hc⟩
+    refine ⟨hG, ?_⟩
+    by_contra h
+    rw [not_or] at h
+    exact hc ⟨hG.ne, ⟨u, h.1⟩, ⟨v, h.2⟩, hG, rfl, rfl⟩
+  · rintro ⟨hG, h⟩
+    refine ⟨hG, ?_⟩
+    rintro ⟨-, a, b, -, rfl, rfl⟩
+    rcases h with h | h
+    · exact a.2 h
+    · exact b.2 h
 
 /-- "Every edge in `N` is in exactly one of these two subnetworks" (Section "The EC-SBM network
 simulator"): the clustered subnetwork and the outlier subnetwork of the clustering `𝒞`. -/
@@ -55,6 +67,10 @@ theorem edge_mem_clustered_xor_outlier [Fintype W] [DecidableEq W] (G : SimpleGr
     (𝒞 : Finpartition (Finset.univ : Finset W)) {e : Sym2 W} (he : e ∈ G.edgeSet) :
     Xor (e ∈ (clusteredSubnetwork G (outliers 𝒞)).edgeSet)
       (e ∈ (outlierSubnetwork G (outliers 𝒞)).edgeSet) := by
-  sorry
+  induction e using Sym2.ind with
+  | _ u v =>
+  by_cases hc : (clusteredSubnetwork G (outliers 𝒞)).Adj u v
+  · exact Or.inl ⟨hc, fun ho => ho.2 hc⟩
+  · exact Or.inr ⟨⟨he, hc⟩, hc⟩
 
 end ECSBM

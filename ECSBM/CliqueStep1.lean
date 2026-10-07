@@ -54,11 +54,41 @@ variable {V : Type*} [Fintype V] {k : ℕ}
 def output (r : CliqueStep1Run V k) : SimpleGraph V :=
   fromEdgeSet {e | ∃ j, ∃ u ∈ r.nbrs j, e = s(r.order j, u)}
 
+/-- The vertex processed `j`-th is adjacent to the vertices chosen for it. -/
+theorem output_adj (r : CliqueStep1Run V k) {j : Fin (Fintype.card V)} {u : V}
+    (hu : u ∈ r.nbrs j) : r.output.Adj (r.order j) u := by
+  refine (fromEdgeSet_adj _).mpr ⟨⟨j, u, hu, rfl⟩, ?_⟩
+  obtain ⟨i, hij, rfl⟩ := r.nbrs_present j u hu
+  exact fun h => hij.ne' (r.order.injective h)
+
+/-- During the first `k + 1` iterations, every vertex is made adjacent to all the vertices
+processed before it: the `j ≤ k` vertices before it are present, and it must be made adjacent to
+`min k j = j` of them. -/
+theorem mem_nbrs_of_lt (r : CliqueStep1Run V k) {i j : Fin (Fintype.card V)} (hij : i < j)
+    (hj : (j : ℕ) ≤ k) : r.order i ∈ r.nbrs j := by
+  classical
+  by_contra hnot
+  have hsub : r.nbrs j ⊆ ((Finset.Iio j).image r.order).erase (r.order i) := by
+    intro u hu
+    obtain ⟨i', hi', rfl⟩ := r.nbrs_present j u hu
+    exact Finset.mem_erase.mpr
+      ⟨fun h => hnot (h ▸ hu), Finset.mem_image_of_mem _ (Finset.mem_Iio.mpr hi')⟩
+  have h₁ := Finset.card_le_card hsub
+  rw [r.card_nbrs j, min_eq_right hj,
+    Finset.card_erase_of_mem (Finset.mem_image_of_mem _ (Finset.mem_Iio.mpr hij)),
+    Finset.card_image_of_injective _ r.order.injective, Fin.card_Iio] at h₁
+  have : (i : ℕ) < j := hij
+  omega
+
 /-- "The result of the first `k + 1` iterations is a `(k + 1)`-clique": the vertices processed
 first, `order i` for `i ≤ k`, are pairwise adjacent. -/
 theorem isClique (r : CliqueStep1Run V k) :
     r.output.IsClique {v | (r.order.symm v : ℕ) ≤ k} := by
-  sorry
+  intro a ha b hb hab
+  have hne : r.order.symm a ≠ r.order.symm b := fun h => hab (r.order.symm.injective h)
+  rcases lt_or_gt_of_ne hne with h | h
+  · simpa using (r.output_adj (r.mem_nbrs_of_lt h hb)).symm
+  · simpa using r.output_adj (r.mem_nbrs_of_lt h ha)
 
 /-- The vertices processed in the first `k + 1` iterations, which form a `(k + 1)`-clique. -/
 def cliqueVertices (r : CliqueStep1Run V k) : Set V :=
@@ -74,7 +104,9 @@ theorem addedIndex_val (hk : k < Fintype.card V) (j : Fin (Fintype.card V - (k +
 
 theorem order_addedIndex_mem_compl (r : CliqueStep1Run V k) (hk : k < Fintype.card V)
     (j : Fin (Fintype.card V - (k + 1))) : r.order (addedIndex hk j) ∈ r.cliqueVertices ᶜ := by
-  sorry
+  simp only [cliqueVertices, Set.mem_compl_iff, Set.mem_ofPred_eq, Equiv.symm_apply_apply,
+    addedIndex_val, not_le]
+  omega
 
 /-- The `j`-th vertex processed after the first `k + 1`. -/
 def addedVertex (r : CliqueStep1Run V k) (hk : k < Fintype.card V)
@@ -83,7 +115,17 @@ def addedVertex (r : CliqueStep1Run V k) (hk : k < Fintype.card V)
 
 theorem addedVertex_bijective (r : CliqueStep1Run V k) (hk : k < Fintype.card V) :
     Function.Bijective (r.addedVertex hk) := by
-  sorry
+  constructor
+  · intro j₁ j₂ h
+    have h' := congrArg Fin.val (r.order.injective (congrArg Subtype.val h))
+    rw [addedIndex_val, addedIndex_val] at h'
+    exact Fin.ext (by omega)
+  · rintro ⟨v, hv⟩
+    simp only [cliqueVertices, Set.mem_compl_iff, Set.mem_ofPred_eq, not_le] at hv
+    refine ⟨⟨(r.order.symm v : ℕ) - (k + 1), by omega⟩, Subtype.ext ?_⟩
+    change r.order (addedIndex hk _) = v
+    rw [show addedIndex hk ⟨(r.order.symm v : ℕ) - (k + 1), by omega⟩ = r.order.symm v from
+      Fin.ext (by rw [addedIndex_val, Fin.val_mk]; omega), Equiv.apply_symm_apply]
 
 /-- The run, seen as a run of Step 1 started from the `(k + 1)`-clique on the vertices processed
 first: each later vertex is made adjacent to `min k j = k` vertices already present. -/
@@ -95,31 +137,95 @@ noncomputable def toStep1Run (r : CliqueStep1Run V k) (hk : k < Fintype.card V) 
   order := Equiv.ofBijective _ (r.addedVertex_bijective hk)
   nbrs := fun j => r.nbrs (addedIndex hk j)
   nbrs_present := fun j u hu => by
-    sorry
+    obtain ⟨i, hij, rfl⟩ := r.nbrs_present _ u hu
+    by_cases hi : (i : ℕ) ≤ k
+    · exact Or.inl (by simpa [cliqueVertices] using hi)
+    · have hij' : (i : ℕ) < j + (k + 1) := hij
+      refine Or.inr ⟨⟨(i : ℕ) - (k + 1), by omega⟩, Fin.lt_def.mpr (by simp only; omega), ?_⟩
+      change r.order (addedIndex hk _) = r.order i
+      rw [show addedIndex hk ⟨(i : ℕ) - (k + 1), by omega⟩ = i from
+        Fin.ext (by rw [addedIndex_val, Fin.val_mk]; omega)]
   card_nbrs := fun j => by
-    sorry
+    rw [r.card_nbrs, addedIndex_val]
+    omega
 
 /-- The run starts from the `(k + 1)`-clique: its initial graph is complete on `k + 1`
 vertices. -/
 theorem toStep1Run_V₀_ncard (r : CliqueStep1Run V k) (hk : k < Fintype.card V) :
     (r.toStep1Run hk).V₀.ncard = k + 1 := by
-  sorry
+  have hV₀ : (r.toStep1Run hk).V₀ =
+      ↑((Finset.Iic (⟨k, hk⟩ : Fin (Fintype.card V))).map r.order.toEmbedding) := by
+    ext v
+    simp [toStep1Run, cliqueVertices, Fin.le_def]
+  rw [hV₀, Set.ncard_coe_finset, Finset.card_map, Fin.card_Iic]
+
+/-- Every edge of the run seen as started from the clique is an edge of the run: the edges of the
+clique join vertices processed first, and the other edges are the same. -/
+theorem toStep1Run_output_le (r : CliqueStep1Run V k) (hk : k < Fintype.card V) :
+    (r.toStep1Run hk).output ≤ r.output := by
+  intro a b h
+  rcases (sup_adj _ _ _ _).mp h with h | h
+  · obtain ⟨hne, a', b', -, rfl, rfl⟩ := (map_adj' _ _ _ _).mp h
+    exact r.isClique a'.2 b'.2 hne
+  · obtain ⟨⟨j, u, hu, he⟩, -⟩ := (fromEdgeSet_adj _).mp h
+    have hadj := r.output_adj hu
+    rcases Sym2.eq_iff.mp he with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · exact hadj
+    · exact hadj.symm
 
 /-- Seen as a run of Step 1 started from the clique, the run has the same output. -/
 theorem toStep1Run_output (r : CliqueStep1Run V k) (hk : k < Fintype.card V) :
     (r.toStep1Run hk).output = r.output := by
-  sorry
+  refine le_antisymm (r.toStep1Run_output_le hk) ?_
+  intro a b h
+  obtain ⟨⟨j, u, hu, he⟩, hne⟩ := (fromEdgeSet_adj _).mp h
+  obtain ⟨i, hij, rfl⟩ := r.nbrs_present j u hu
+  have hij' : (i : ℕ) < j := hij
+  by_cases hj : (j : ℕ) ≤ k
+  · -- an edge between two of the first `k + 1` vertices: an edge of the clique
+    have hjC : r.order j ∈ r.cliqueVertices := by simp [cliqueVertices, hj]
+    have hiC : r.order i ∈ r.cliqueVertices := by simp [cliqueVertices]; omega
+    refine (sup_adj _ _ _ _).mpr (Or.inl ((map_adj' _ _ _ _).mpr ⟨hne, ?_⟩))
+    rcases Sym2.eq_iff.mp he with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · exact ⟨⟨_, hjC⟩, ⟨_, hiC⟩, (top_adj _ _).mpr fun h => hne (congrArg Subtype.val h),
+        rfl, rfl⟩
+    · exact ⟨⟨_, hiC⟩, ⟨_, hjC⟩, (top_adj _ _).mpr fun h => hne (congrArg Subtype.val h),
+        rfl, rfl⟩
+  · -- an edge added at a later step
+    have hjlt := j.isLt
+    set j' : Fin (Fintype.card V - (k + 1)) := ⟨(j : ℕ) - (k + 1), by omega⟩ with hj'
+    have hjj : addedIndex hk j' = j := Fin.ext (by rw [addedIndex_val, hj', Fin.val_mk]; omega)
+    refine (sup_adj _ _ _ _).mpr (Or.inr ((fromEdgeSet_adj _).mpr ⟨⟨j', r.order i, ?_, ?_⟩, hne⟩))
+    · change r.order i ∈ r.nbrs (addedIndex hk j')
+      rw [hjj]
+      exact hu
+    · change s(a, b) = s(r.order (addedIndex hk j'), r.order i)
+      rw [hjj]
+      exact he
 
 /-- At the end of Step 1, the spanning subnetwork has minimum cut size at least `k` (Fig. 3), if
 the cluster has more than `k` vertices: the run is a run of Step 1 started from the
 `(k + 1)`-clique, which is `k`-edge-connected, so Theorem 1 applies. -/
 theorem isEdgeConnected (r : CliqueStep1Run V k) (hk : k < Fintype.card V) :
     r.output.IsEdgeConnected k := by
-  sorry
+  have hN₀ : (r.toStep1Run hk).N₀.IsEdgeConnected k := by
+    have h := isEdgeConnected_completeGraph (V := (r.toStep1Run hk).V₀)
+    rwa [Nat.card_coe_set_eq, r.toStep1Run_V₀_ncard hk, Nat.add_sub_cancel] at h
+  rw [← r.toStep1Run_output hk]
+  exact (theorem1 (r.toStep1Run hk) hN₀).2
 
 /-- The procedure can always be run: there is a run on every finite vertex set, for every `k`. -/
 theorem nonempty : Nonempty (CliqueStep1Run V k) := by
-  sorry
+  classical
+  let e := (Fintype.equivFin V).symm
+  have h : ∀ j : Fin (Fintype.card V), ∃ s ⊆ (Finset.Iio j).image e, s.card = min k j :=
+    fun j => Finset.exists_subset_card_eq (by
+      rw [Finset.card_image_of_injective _ e.injective, Fin.card_Iio]
+      exact min_le_right _ _)
+  choose s hs hcard using h
+  exact ⟨⟨e, s, fun j u hu => by
+    obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp (hs j hu)
+    exact ⟨i, Finset.mem_Iio.mp hi, rfl⟩, hcard⟩⟩
 
 end CliqueStep1Run
 

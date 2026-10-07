@@ -58,7 +58,9 @@ noncomputable def output (r : CliqueRun G 𝒞) : SimpleGraph W :=
 (`ECSBM.desiredConnectivity_add_one_le`). -/
 theorem desiredConnectivity_lt_card {C : Finset W} (hC : C ∈ nonsingletonClusters 𝒞) :
     desiredConnectivity G C < Fintype.card (C : Set W) := by
-  sorry
+  have := desiredConnectivity_add_one_le (G := G) hC
+  rw [show Fintype.card (C : Set W) = C.card by simp]
+  omega
 
 /-- The run as a run of EC-SBM in the sense of `ECSBM.Run`: in each non-singleton cluster, Step 1
 is the run of `ECSBM.CliqueStep1Run.toStep1Run`, started from the `(k + 1)`-clique. -/
@@ -68,16 +70,30 @@ noncomputable def toRun (r : CliqueRun G 𝒞) : Run G 𝒞 where
   stage2SBM := r.stage2SBM
   stage3 := r.stage3
 
+/-- Step 1 gives the same union of spanning subnetworks in both descriptions of the run. -/
+theorem toRun_step1Output (r : CliqueRun G 𝒞) :
+    r.toRun.step1Output =
+      ⨆ (C) (hC : C ∈ nonsingletonClusters 𝒞), (r.step1 C hC).output.map Subtype.val :=
+  iSup_congr fun C => iSup_congr fun hC => congrArg (SimpleGraph.map Subtype.val)
+    ((r.step1 C hC).toStep1Run_output (desiredConnectivity_lt_card hC))
+
 /-- The two descriptions of the run give the same synthetic network. -/
 theorem toRun_output (r : CliqueRun G 𝒞) : r.toRun.output = r.output := by
-  sorry
+  unfold Run.output Run.stage2Output Run.stage1Output output
+  rw [toRun_step1Output]
+  rfl
 
 /-- **Theorem 2** for EC-SBM as the paper runs it: in the synthetic network, every cluster has
 minimum cut size at least its minimum cut size in the empirical network `G`. -/
 theorem theorem2 (r : CliqueRun G 𝒞) :
     ∀ C ∈ 𝒞.parts,
       minCutSize (G.induce (C : Set W)) ≤ minCutSize (r.output.induce (C : Set W)) := by
-  sorry
+  rw [← r.toRun_output]
+  refine ECSBM.theorem2 G 𝒞 r.toRun fun C hC => ?_
+  -- Step 1 starts from a `(k + 1)`-clique, which is `k`-edge-connected
+  have h := isEdgeConnected_completeGraph
+    (V := ((r.step1 C hC).toStep1Run (desiredConnectivity_lt_card hC)).V₀)
+  rwa [Nat.card_coe_set_eq, CliqueStep1Run.toStep1Run_V₀_ncard, Nat.add_sub_cancel] at h
 
 end CliqueRun
 
