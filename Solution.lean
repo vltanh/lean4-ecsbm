@@ -1,6 +1,7 @@
 module
 
 public import ECSBM.CliqueRun
+public import ECSBM.Exactness
 public import ECSBM.Subnetworks
 
 /-!

@@ -56,3 +56,25 @@ Figures, from 7 October 2026, 17:48 CDT, to the commit that completes [`REPORT.m
 The elapsed time includes the builds and the downloads, which the transcripts do not separate
 from the rest. The figures leave out the work after the report: the credits, and the final checks
 of the packaging.
+
+## Second round (7 October 2026)
+
+At the author's request, the observation of [`REPORT.md`](REPORT.md), Section 11, that Step 1 gives exactly the
+desired edge connectivity was added to the library, beyond the paper
+([`ECSBM/Exactness.lean`](ECSBM/Exactness.lean)): for Step 1 as the paper runs it, which the first round had checked in a
+scratch file, and for Step 1 started from any `k`-edge-connected graph, which it had argued only on
+paper.
+
+How it was made:
+
+- The main session wrote and proved both results, wired the module into the Solution and the
+  audit, reran every check (build, audit, route check, Comparator), and updated the documents. No
+  sub-agent took part.
+
+Figures, from 20:46 CDT to 20:48 CDT, before the commit that completes the round:
+
+- **Elapsed time:** about 2 minutes.
+- **Tool calls and tokens:** 9 tool calls, with 0.02 million output tokens, 0.02 million input
+  tokens and 7 million cache reads, all in the main session.
+- **Model calls:** 9, all to Claude Opus 5.5.
+

@@ -9,6 +9,7 @@ import all ECSBM.Clique
 import all ECSBM.CliqueRun
 import all ECSBM.CliqueStep1
 import all ECSBM.Defs
+import all ECSBM.Exactness
 import all ECSBM.Existence
 import all ECSBM.Subnetworks
 import all ECSBM.Terminology

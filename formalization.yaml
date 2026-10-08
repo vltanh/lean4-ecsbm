@@ -91,6 +91,8 @@ status:
     degree-correction edges as arbitrary multigraphs and edges; the parameter updates, the rules
     of the stochastic block model and of degree correction are not modelled, since the guarantee
     holds whatever they produce. Not formalized: the experiments and statistics of the paper.
+    Beyond the paper, the library proves that Step 1's output has minimum cut size exactly k
+    (ECSBM/Exactness.lean); this result is not in the Challenge.
     Theorem 2 states as a hypothesis that Step 1 starts from k-edge-connected graphs, which the
     paper's phrase "allowing for any way of initializing Step 1" leaves to the text before
     Theorem 1. The misprint max{k,|N0|} in the description of Step 1 is read as min{k,|N0|}.

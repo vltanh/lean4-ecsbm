@@ -20,6 +20,8 @@ Status of the formalization:
   every edge of the network lies in exactly one of the clustered and the outlier subnetworks
   ([`ECSBM.edge_mem_clustered_xor_outlier`](ECSBM/Subnetworks.lean#L66)), and Theorem 2 for the procedure that the paper runs
   ([`ECSBM.CliqueRun.theorem2`](ECSBM/CliqueRun.lean#L88)).
+- **Beyond the paper:** the library also proves that the spanning subnetwork of Step 1 has minimum
+  cut size exactly `k`, not only at least `k` (Section 11).
 - **Cited results:** the paper's proofs cite no result from the literature, so nothing is
   assumed and nothing lives in an `External/` directory. The formalization is unconditional.
 - **Build:** `lake build` succeeds; the only `sorry`s are the six in [`Challenge.lean`](Challenge.lean), by design.
@@ -426,16 +428,16 @@ communities.
   builds, as the paper runs it, has minimum cut size exactly `k` when the cluster has at least two
   vertices and more than `k`: Theorem 1 gives at least `k`, and the last vertex processed has
   exactly `k` edges, or, when no vertex follows the clique, the `(k + 1)`-clique has minimum cut
-  size `k`. Checked in Lean, in a scratch file outside the library (`minCutSize r.output = k` for
-  a [`CliqueStep1Run`](ECSBM/CliqueStep1.lean#L39) with `k < |V|` and `2 ≤ |V|`), and on 2,422 random runs. By the same
-  argument, the same holds for Step 1 started from any `k`-edge-connected graph, as soon as one
-  vertex is added and the cluster has at least two vertices (on paper only). So whatever excess
-  the synthetic clusters show over the desired edge connectivity comes from Steps 2a to 3, as the
-  paper observes in Experiment 2 ("edges can be added ... which can increase the cluster
-  connectivity beyond the desired value"). A natural target is a variant of the later stages that
-  keeps the minimum cut size of every cluster exactly at its desired value, or a bound on the
-  excess: adding a new edge to a connected graph leaves its minimum cut size unchanged exactly
-  when some minimum edge cut leaves the edge's two endpoints on the same side.
+  size `k`. The same holds for Step 1 started from any `k`-edge-connected graph, as soon as one
+  vertex is added and there are at least two vertices. Both are proved in the library, beyond the
+  paper ([`ECSBM.CliqueStep1Run.minCutSize_output_eq`](ECSBM/Exactness.lean#L76), [`ECSBM.Step1Run.minCutSize_output_eq`](ECSBM/Exactness.lean#L33)), and
+  the first was also checked on 2,422 random runs. So whatever excess the synthetic clusters show
+  over the desired edge connectivity comes from Steps 2a to 3, as the paper observes in
+  Experiment 2 ("edges can be added ... which can increase the cluster connectivity beyond the
+  desired value"). A natural target is a variant of the later stages that keeps the minimum cut
+  size of every cluster exactly at its desired value, or a bound on the excess: adding a new edge
+  to a connected graph leaves its minimum cut size unchanged exactly when some minimum edge cut
+  leaves the edge's two endpoints on the same side.
 - **Vertex connectivity.** Started from the `(k + 1)`-clique, as the paper runs it, Step 1's
   spanning subnetwork is even `k`-vertex-connected: the clique is, and adding a vertex adjacent to
   `k` vertices of a `k`-connected graph keeps it `k`-connected (the expansion lemma for vertex

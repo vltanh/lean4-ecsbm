@@ -23,6 +23,9 @@ paper's own proofs.
   `k`-edge-connected ([`ECSBM.CliqueStep1Run.isEdgeConnected`](ECSBM/CliqueStep1.lean#L209), Fig. 3); Theorem 2 for that
   procedure ([`ECSBM.CliqueRun.theorem2`](ECSBM/CliqueRun.lean#L88)); every edge lies in exactly one of the clustered and the
   outlier subnetworks ([`ECSBM.edge_mem_clustered_xor_outlier`](ECSBM/Subnetworks.lean#L66)).
+- **Beyond the paper:** the spanning subnetwork of Step 1 has minimum cut size exactly `k`, not
+  only at least `k`, both as the paper runs it ([`ECSBM.CliqueStep1Run.minCutSize_output_eq`](ECSBM/Exactness.lean#L76)) and
+  from any `k`-edge-connected start ([`ECSBM.Step1Run.minCutSize_output_eq`](ECSBM/Exactness.lean#L33)).
 - The paper's proofs cite no result from the literature. The standard facts they use, such as the
   `k`-edge-connectivity of the `(k + 1)`-clique, are proved in the library.
 - `lake build` succeeds with no `sorry` outside [`Challenge.lean`](Challenge.lean) and no `axiom`;
@@ -108,8 +111,8 @@ From [`REPORT.md`](REPORT.md), Section 10 (search of 7 October 2026):
 ## What's next
 
 Step 1 gives exactly the desired edge connectivity, not just at least it: the last vertex added
-has `k` edges (checked in Lean, outside the library), so any excess in the synthetic clusters comes
-from the later stages. Started from the clique, it even gives `k`-vertex-connectivity, which would
+has `k` edges (proved in [`ECSBM/Exactness.lean`](ECSBM/Exactness.lean), beyond the paper), so any
+excess in the synthetic clusters comes from the later stages. Started from the clique, it even gives `k`-vertex-connectivity, which would
 strengthen Theorem 2 once Mathlib has vertex connectivity. The cut characterization of edge
 connectivity and its value on complete graphs, proved here, would fit in Mathlib, with the edge
 expansion lemma, which is Theorem 1 for one added vertex. See [`REPORT.md`](REPORT.md),
@@ -142,6 +145,7 @@ reads `.lake/route_deps.tsv`, which the audit writes.
 | [`ECSBM/Theorem2.lean`](ECSBM/Theorem2.lean) | Theorem 2 and the steps of its proof |
 | [`ECSBM/Existence.lean`](ECSBM/Existence.lean) | Runs exist; a `k`-edge-connected graph with two vertices has `k + 1` |
 | [`ECSBM/CliqueRun.lean`](ECSBM/CliqueRun.lean) | Theorem 2 for EC-SBM as the paper runs it |
+| [`ECSBM/Exactness.lean`](ECSBM/Exactness.lean) | Beyond the paper: Step 1's output has minimum cut size exactly `k` |
 | [`Challenge.lean`](Challenge.lean), [`Solution.lean`](Solution.lean) | The statements of record, and their proofs from the library |
 | [`scripts/`](scripts) | The audit, the route check, the Challenge's copy of the definitions, the documents' links and tables |
 | [`docs/`](docs) | The routes of the paper's proofs, and the reviewed differences (none) |
