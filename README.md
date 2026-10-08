@@ -81,7 +81,8 @@ From [`REPORT.md`](REPORT.md):
   following the [formalize-math-paper](https://github.com/vltanh/formalize-math-paper) procedure;
   independent agents reviewed the statements, the proofs and the audit. No person has reviewed the
   proofs yet.
-- Made on 7 October 2026. [`CREDITS.md`](CREDITS.md) gives the procedure, the agents and the effort.
+- Made on 7 October 2026: 1.55 hours from the request to the completed audit, with 4 sub-agents,
+  at most 2 at once. [`CREDITS.md`](CREDITS.md) gives the procedure, the agents and the effort.
 
 ## Related work
 
