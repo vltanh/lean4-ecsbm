@@ -37,8 +37,8 @@ How it was made:
   [`README.md`](README.md); another sub-agent checked every finding against the paper and every summary of
   another work against its source. The main session also checked two observations for Section 11
   numerically and one in Lean.
-- **Packaging.** The main session wrote the Palomar files and ran Palomar's local checks. Nothing
-  has been published yet.
+- **Packaging.** The main session wrote the Palomar files and ran Palomar's local checks; at the
+  author's choice, the project is not submitted to Palomar.
 
 Figures, from 7 October 2026, 17:48 CDT, to the commit that completes [`REPORT.md`](REPORT.md)
 (`95cef720`, 19:21 CDT), taken from the session's transcripts with the skill's

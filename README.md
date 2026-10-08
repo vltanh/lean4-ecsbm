@@ -49,10 +49,11 @@ need:
 
 ## Palomar
 
-The project is packaged for the [Palomar](https://palomar-registry.org) registry: [`Challenge.lean`](Challenge.lean),
-[`Solution.lean`](Solution.lean) (which restates the Challenge's theorems and proves them from the library),
-[`comparator.json`](comparator.json) and [`formalization.yaml`](formalization.yaml). To run Comparator locally (it needs
-[bubblewrap](https://github.com/containers/bubblewrap)):
+The project is packaged for the [Palomar](https://palomar-registry.org) registry, though it is not
+submitted there: [`Challenge.lean`](Challenge.lean), [`Solution.lean`](Solution.lean) (which
+restates the Challenge's theorems and proves them from the library),
+[`comparator.json`](comparator.json) and [`formalization.yaml`](formalization.yaml). To run
+Comparator locally (it needs [bubblewrap](https://github.com/containers/bubblewrap)):
 
 ```sh
 lake env lake comparator --config=comparator.json
