@@ -1,5 +1,7 @@
 # EC-SBM's edge-connectivity guarantees, in Lean
 
+[![Lean Action CI](https://github.com/vltanh/lean4-ecsbm/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/vltanh/lean4-ecsbm/actions/workflows/lean_action_ci.yml)
+
 A Lean 4 and Mathlib formalization of the two theorems of The-Anh Vu-Le, Lahari Anne, George
 Chacko and Tandy Warnow, *EC-SBM synthetic network generator*, Applied Network Science 10, 15
 (2025), <https://doi.org/10.1007/s41109-025-00701-2>. EC-SBM generates a synthetic network that
