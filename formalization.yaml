@@ -107,7 +107,7 @@ automation:
       framework: "Claude Code 2.1.291 (VS Code extension)"
       tool_setup: >-
         The formalize-math-paper skill (https://github.com/vltanh/formalize-math-paper, commit
-        d82a98e1237e5b864bb76185b1ebb5548092a184, version 2.2.0), run by one main session with
+        13cfb7162b69138771b2aeeec36538660834e1e0, version 2.2.0), run by one main session with
         sub-agents for the statement review, the proof comparison, the literature search and the
         audit verification; see CREDITS.md.
       cost:

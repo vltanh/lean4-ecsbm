@@ -9,7 +9,7 @@ How this formalization was made, from the run log and the session transcripts.
 - **Formalization:** Claude Opus 5.5 (`claude-opus-5-5`, Anthropic), in Claude Code 2.1.291 (VS
   Code extension), in one session with sub-agents. There was no earlier draft.
 - **Procedure:** the [formalize-math-paper](https://github.com/vltanh/formalize-math-paper) skill,
-  version 2.2.0 (commit `d82a98e1237e5b864bb76185b1ebb5548092a184`).
+  version 2.2.0 (commit `13cfb7162b69138771b2aeeec36538660834e1e0`).
 - **Review:** no person has reviewed the proofs yet. Separate agents reviewed the statements and
   the Challenge against the paper (twice), compared the formal proofs with the paper's, searched
   the literature, and checked the findings of the report against the paper.
